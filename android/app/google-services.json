@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "182192356671",
+    "project_id": "umdlostandfound",
+    "storage_bucket": "umdlostandfound.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:182192356671:android:88de2f4de4ac219305678a",
+        "android_client_info": {
+          "package_name": "com.example.map_test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBs6YSPoVRQk8hsPddjWUnpTBmuGJJI3iQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
