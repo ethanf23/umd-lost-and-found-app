@@ -5,6 +5,7 @@ import 'package:umdlostandfound/random_markers.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:geolocator/geolocator.dart';
 
 void main() async {
   // Required to connect to Firebase Cloud Storage
@@ -68,6 +69,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // Default map to center at the University of Maryland
   static const _initialCenter = LatLng(38.9869, -76.9426);
+  Position? _currentPosition;
   MapOptions options = const MapOptions(initialCenter: _initialCenter);
 
   // Connect storage to FirebaseStorage instance
