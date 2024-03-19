@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:umdlostandfound/items_list.dart';
 import 'package:umdlostandfound/random_markers.dart';
+import 'package:umdlostandfound/lost_item.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:geolocator/geolocator.dart';
 
 void main() async {
-  // Required to connect to Firebase Cloud Storage
-
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-
   runApp(const MyApp());
+
+  // Required to connect to Firebase Cloud Storage
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -61,6 +62,12 @@ class _MyHomePageState extends State<MyHomePage> {
         context, MaterialPageRoute(builder: (context) => const Placeholder()));
   }
 
+  final lostItems = List.generate(
+    20,
+    (i) => LostItem('Item $i',
+        'A description of what needs to be done for Todo $i', 'sample/path'),
+  );
+
   // Connect storage to FirebaseStorage instance
   // final storage = FirebaseStorage.instance;
 
@@ -98,7 +105,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Placeholder()));
+                                builder: (context) =>
+                                    ItemsListScreen(items: lostItems)));
                       },
                       child: MarkerLayer(markers: randomMarkers))
                 ])
