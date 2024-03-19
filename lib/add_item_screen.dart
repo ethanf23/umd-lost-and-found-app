@@ -4,7 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-
 class AddItemPage extends StatefulWidget {
   const AddItemPage({super.key, required this.title});
 
@@ -15,13 +14,11 @@ class AddItemPage extends StatefulWidget {
 }
 
 class _AddItemPageState extends State<AddItemPage> {
-  
-  File ? selectedImage;
-  UploadTask ? uploadTask;
+  File? selectedImage;
+  UploadTask? uploadTask;
 
   void _incrementCounter() {
-    setState(() {
-    });
+    setState(() {});
   }
 
   @override
@@ -34,57 +31,49 @@ class _AddItemPageState extends State<AddItemPage> {
       body: Center(
         child: Column(
           children: [
-            if(selectedImage != null)
+            if (selectedImage != null)
               Expanded(
-                child: Container(
-                  child: Center(
-                    child: Image.file(
-                      File(selectedImage!.path!),
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    )
-                  )
-                )
-              ),
+                  child: Container(
+                      child: Center(
+                          child: Image.file(
+                File(selectedImage!.path!),
+                width: double.infinity,
+                fit: BoxFit.cover,
+              )))),
             const SizedBox(height: 32),
             MaterialButton(
-              color: Colors.blue,
-              child: const Text(
-                "Select Picture",
-                 style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16
-                 )
-              ),
-              onPressed: () {
-                _pickImageFromGallery();
-              }
-            ),
-
+                color: Colors.blue,
+                child: const Text("Select Picture",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16)),
+                onPressed: () {
+                  _pickImageFromGallery();
+                }),
             MaterialButton(
-              color: Colors.red,
-              child: const Text(
-                "Upload Picture",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16
-                )
-              ),
-              onPressed: (){
-                uploadPicture();
-              }
-              ),
-              const SizedBox(height: 32,),
-              buildProgress(),
-              selectedImage != null ? Image.file(selectedImage!) : const Text("Please select an image")
+                color: Colors.red,
+                child: const Text("Upload Picture",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16)),
+                onPressed: () {
+                  uploadPicture();
+                }),
+            const SizedBox(
+              height: 32,
+            ),
+            buildProgress(),
+            selectedImage != null
+                ? Image.file(selectedImage!)
+                : const Text("Please select an image")
           ],
         ),
       ),
- 
     );
   }
+
   Future _pickImageFromGallery() async {
     final returnedImage = await FilePicker.platform.pickFiles();
     if (returnedImage == null) return;
@@ -94,14 +83,13 @@ class _AddItemPageState extends State<AddItemPage> {
   }
 
   Future uploadPicture() async {
-    final returnedImage = File(selectedImage!.path); 
+    final returnedImage = File(selectedImage!.path);
     final path = 'files/${selectedImage!.path!}';
-   
+
     final ref = FirebaseStorage.instance.ref().child(path);
-    setState((){
+    setState(() {
       uploadTask = ref.putFile(returnedImage);
     });
-    
 
     final snapshot = await uploadTask!.whenComplete(() => {});
 
@@ -114,35 +102,32 @@ class _AddItemPageState extends State<AddItemPage> {
   }
 
   Widget buildProgress() => StreamBuilder<TaskSnapshot>(
-    stream: uploadTask?.snapshotEvents,
-    builder: (context, snapshot) {
-      if(snapshot.hasData) {
-        final data = snapshot.data!;
-        double progress = data.bytesTransferred / data.totalBytes;
-        
-        return SizedBox(
-          height: 50,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              LinearProgressIndicator(
-                value: progress,
-                backgroundColor: Colors.grey,
-                color: Colors.green,
-              ),
+      stream: uploadTask?.snapshotEvents,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final data = snapshot.data!;
+          double progress = data.bytesTransferred / data.totalBytes;
 
-              Center(
-                child: Text(
+          return SizedBox(
+            height: 50,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                LinearProgressIndicator(
+                  value: progress,
+                  backgroundColor: Colors.grey,
+                  color: Colors.green,
+                ),
+                Center(
+                    child: Text(
                   '${(100 * progress).roundToDouble()}%',
                   style: const TextStyle(color: Colors.white),
-                )
-              )
-            ],
-          ),
-        );
-      } else {
-        return const SizedBox(height: 50);
-      }
-    }
-  );
+                ))
+              ],
+            ),
+          );
+        } else {
+          return const SizedBox(height: 50);
+        }
+      });
 }
