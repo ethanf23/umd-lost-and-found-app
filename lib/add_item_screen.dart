@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:gallery_picker/gallery_picker.dart';
 
 class AddItemPage extends StatefulWidget {
   const AddItemPage({super.key, required this.title});
@@ -17,9 +18,6 @@ class _AddItemPageState extends State<AddItemPage> {
   File? selectedImage;
   UploadTask? uploadTask;
 
-  void _incrementCounter() {
-    setState(() {});
-  }
 
   @override
   Widget build(BuildContext context) {
