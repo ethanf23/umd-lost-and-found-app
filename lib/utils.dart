@@ -3,8 +3,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_picker/gallery_picker.dart';
 
-
-
 Future<File?> getImageFromGallery(BuildContext context) async {
   try {
     List<MediaFile>? singleMedia =
@@ -31,9 +29,8 @@ Future<bool> uploadFileForUser(File file) async {
 
 Future<List<Reference>?> getUsersUplodedFiles() async {
   try {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
     final storageRef = FirebaseStorage.instance.ref();
-    final uploadsRefs = storageRef.child("$userId/uploads");
+    final uploadsRefs = storageRef.child("/uploads");
     final uploads = await uploadsRefs.listAll();
     return uploads.items;
   } catch (e) {

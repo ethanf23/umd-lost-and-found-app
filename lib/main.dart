@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:umdlostandfound/add_item_screen.dart';
+import 'package:umdlostandfound/add_item_h.dart';
 import 'package:umdlostandfound/location_handling.dart';
 import 'package:umdlostandfound/random_markers.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -55,9 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
     getPosition().then((value) => position = value);
     print('${position.latitude.toString()}, ${position.longitude.toString()}');
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const AddItemPage(title: "Add Item")));
+        context, MaterialPageRoute(builder: (context) => const AddItemH()));
   }
 
   // Connect storage to FirebaseStorage instance

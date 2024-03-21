@@ -42,6 +42,7 @@ class _AddItemHState extends State<AddItemH> {
         if (selectedImage != null) {
           bool success = await uploadFileForUser(selectedImage);
           if (success) {
+            print("Success");
             getUploadedFiles();
           }
         }
