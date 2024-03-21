@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:umdlostandfound/add_item_screen.dart';
+import 'package:umdlostandfound/location_handling.dart';
 import 'package:umdlostandfound/random_markers.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -47,16 +49,10 @@ class _MyHomePageState extends State<MyHomePage> {
   // Default map to center at the University of Maryland
   static const _initialCenter = LatLng(38.9869, -76.9426);
   MapOptions options = const MapOptions(initialCenter: _initialCenter);
-
   late Position position;
 
-  Future<void> getPosition() async {
-    position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-  }
-
   void _add() {
-    getPosition();
+    getPosition().then((value) => position = value);
     print('${position.latitude.toString()}, ${position.longitude.toString()}');
     Navigator.push(
         context,

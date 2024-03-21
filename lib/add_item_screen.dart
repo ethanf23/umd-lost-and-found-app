@@ -36,7 +36,7 @@ class _AddItemPageState extends State<AddItemPage> {
                   child: Container(
                       child: Center(
                           child: Image.file(
-                File(selectedImage!.path!),
+                File(selectedImage!.path),
                 width: double.infinity,
                 fit: BoxFit.cover,
               )))),
@@ -76,15 +76,19 @@ class _AddItemPageState extends State<AddItemPage> {
 
   Future _pickImageFromGallery() async {
     final returnedImage = await FilePicker.platform.pickFiles();
-    if (returnedImage == null) return;
+    if (returnedImage == null) {
+      print("File was null");
+      return;
+    }
     setState(() {
+      print("Image selected");
       selectedImage = returnedImage.files.first as File?;
     });
   }
 
   Future uploadPicture() async {
     final returnedImage = File(selectedImage!.path);
-    final path = 'files/${selectedImage!.path!}';
+    final path = 'files/${selectedImage!.path}';
 
     final ref = FirebaseStorage.instance.ref().child(path);
     setState(() {
