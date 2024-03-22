@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
 import 'utils.dart';
 
 class AddItemH extends StatefulWidget {
@@ -35,15 +33,16 @@ class _AddItemHState extends State<AddItemH> {
     );
   }
 
-  Widget _uploadMediaButton(BuildContext context) {
+   Widget _uploadMediaButton(BuildContext context) {
     return MaterialButton(
       onPressed: () async {
-        File? selectedImage = await getImageFromGallery(context);
+        File? selectedImage = await getImageFromGallery();
         if (selectedImage != null) {
           bool success = await uploadFileForUser(selectedImage);
           if (success) {
             print("Success");
             getUploadedFiles();
+
           }
         }
       },
@@ -84,6 +83,7 @@ class _AddItemHState extends State<AddItemH> {
   void getUploadedFiles() async {
     List<Reference>? result = await getUsersUplodedFiles();
     if (result != null) {
+      print(result.toString());
       setState(
         () {
           _uploadedFiles = result;

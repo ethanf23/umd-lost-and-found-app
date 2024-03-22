@@ -62,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Connect storage to FirebaseStorage instance
   final storage = FirebaseStorage.instance;
+  final storage = FirebaseStorage.instance;
 
   // Generate random markers for testing
   List<Marker> randomMarkers =

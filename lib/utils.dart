@@ -1,15 +1,21 @@
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:gallery_picker/gallery_picker.dart';
+import 'package:image_picker/image_picker.dart';
 
-Future<File?> getImageFromGallery(BuildContext context) async {
+
+Future<File?> getImageFromGallery() async {
   try {
-    List<MediaFile>? singleMedia =
-        await GalleryPicker.pickMedia(context: context, singleMedia: true);
-    return singleMedia?.first.getFile();
+    final picker = ImagePicker();
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      return File(pickedImage.path);
+    }
+    // No image selected
+    return null;
   } catch (e) {
-    print(e);
+    print('Error picking image: $e');
+    // Handle the error as needed
+    return null;
   }
 }
 
@@ -30,8 +36,9 @@ Future<bool> uploadFileForUser(File file) async {
 Future<List<Reference>?> getUsersUplodedFiles() async {
   try {
     final storageRef = FirebaseStorage.instance.ref();
-    final uploadsRefs = storageRef.child("/uploads");
+    final uploadsRefs = storageRef.child("/images/uploads");
     final uploads = await uploadsRefs.listAll();
+    print("balls");
     return uploads.items;
   } catch (e) {
     print(e);
