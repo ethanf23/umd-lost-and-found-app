@@ -11,11 +11,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:geolocator/geolocator.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   // Required to connect to Firebase Cloud Storage
 
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(const MyApp());
 }
@@ -52,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late Position position;
 
   void _add() {
+    print("Adding");
     getPosition().then((value) => position = value);
     print('${position.latitude.toString()}, ${position.longitude.toString()}');
     Navigator.push(
@@ -59,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Connect storage to FirebaseStorage instance
-  // final storage = FirebaseStorage.instance;
+  final storage = FirebaseStorage.instance;
 
   // Generate random markers for testing
   List<Marker> randomMarkers =
