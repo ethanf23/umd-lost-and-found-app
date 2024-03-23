@@ -50,7 +50,17 @@ class _MyHomePageState extends State<MyHomePage> {
   // Default map to center at the University of Maryland
   static const _initialCenter = LatLng(38.9869, -76.9426);
   MapOptions options = const MapOptions(initialCenter: _initialCenter);
-  late Position position;
+  late Position position = Position(
+      longitude: 0,
+      latitude: 0,
+      timestamp: DateTime.now(),
+      accuracy: 0,
+      altitude: 0,
+      altitudeAccuracy: 0,
+      heading: 0,
+      headingAccuracy: 0,
+      speed: 0,
+      speedAccuracy: 0);
 
   void _add() {
     print("Adding");

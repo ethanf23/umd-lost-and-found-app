@@ -33,7 +33,7 @@ class _AddItemHState extends State<AddItemH> {
     );
   }
 
-   Widget _uploadMediaButton(BuildContext context) {
+  Widget _uploadMediaButton(BuildContext context) {
     return MaterialButton(
       onPressed: () async {
         File? selectedImage = await getImageFromGallery();
@@ -42,7 +42,6 @@ class _AddItemHState extends State<AddItemH> {
           if (success) {
             print("Success");
             getUploadedFiles();
-
           }
         }
       },
