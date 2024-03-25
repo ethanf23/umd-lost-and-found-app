@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'utils.dart';
@@ -12,6 +14,9 @@ class AddItemH extends StatefulWidget {
 
 class _AddItemHState extends State<AddItemH> {
   File? _uploadedFile;
+  TextEditingController _textEditingController = TextEditingController();
+
+
 
   @override
   void initState() {
@@ -33,8 +38,30 @@ class _AddItemHState extends State<AddItemH> {
         _selectMediaButton(context),
         _buildUI(),
         _uploadMediaButton(context),
+        TextField(
+              controller: _textEditingController,
+              decoration: InputDecoration(
+                hintText: 'Enter your text here',
+              ),
+            ),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () {
+                String text = _textEditingController.text;
+                if (text.isNotEmpty) {
+                  _uploadTextFile(text);
+                }
+              },
+              child: Text('Upload Text File'),
+            ),
       ])),
     );
+
+      @override
+      void dispose() {
+        _textEditingController.dispose();
+        super.dispose();
+     }
   }
 
   Widget _selectMediaButton(BuildContext context) {
@@ -123,4 +150,24 @@ class _AddItemHState extends State<AddItemH> {
   //     );
   //   }
   // }
+
+
+    void _uploadTextFile(String text) async {
+    try {
+      // Encode text to bytes using UTF-8 encoding
+      Uint8List textBytes = Uint8List.fromList(utf8.encode(text));
+      
+      final storageRef = FirebaseStorage.instance.ref();
+      final timestamp = DateTime.now().microsecondsSinceEpoch;
+      final uploadRef = storageRef.child("textfiles/$timestamp.txt");
+      
+      // Upload the text bytes to Firebase Storage
+      await uploadRef.putData(textBytes);
+
+      print('Text file uploaded successfully');
+    } catch (e) {
+      print('Error uploading text file: $e');
+    }
+  }
+
 }
