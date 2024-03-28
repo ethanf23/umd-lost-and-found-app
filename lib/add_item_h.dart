@@ -3,10 +3,12 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:umdlostandfound/lost_item.dart';
 import 'utils.dart';
 
 class AddItemH extends StatefulWidget {
-  const AddItemH({super.key});
+  const AddItemH({super.key, required this.item});
+  final LostItem item;
 
   @override
   State<AddItemH> createState() => _AddItemHState();
@@ -14,14 +16,14 @@ class AddItemH extends StatefulWidget {
 
 class _AddItemHState extends State<AddItemH> {
   File? _uploadedFile;
-  TextEditingController _textEditingController = TextEditingController();
-
-
+  late final LostItem item;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    //getUploadedFiles();
+    item = widget.item;
   }
 
   @override
@@ -35,33 +37,38 @@ class _AddItemHState extends State<AddItemH> {
       ),
       body: Center(
           child: Column(children: [
-        _selectMediaButton(context),
         _buildUI(),
-        _uploadMediaButton(context),
+        _selectMediaButton(context),
         TextField(
-              controller: _textEditingController,
-              decoration: InputDecoration(
-                hintText: 'Enter your text here',
+          controller: _nameController,
+          decoration: const InputDecoration(
+            hintText: 'Item Name',
+          ),
+        ),
+        TextField(
+          controller: _descController,
+          decoration: const InputDecoration(
+            hintText: 'Description',
+          ),
+        ),
+        MaterialButton(
+          onPressed: () {
+            item.name = _nameController.text;
+            item.description = _descController.text;
+            _uploadMedia(item);
+          },
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Submit"),
+              Icon(
+                Icons.upload,
               ),
-            ),
-            SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                String text = _textEditingController.text;
-                if (text.isNotEmpty) {
-                  _uploadTextFile(text);
-                }
-              },
-              child: Text('Upload Text File'),
-            ),
+            ],
+          ),
+        ),
       ])),
     );
-
-      @override
-      void dispose() {
-        _textEditingController.dispose();
-        super.dispose();
-     }
   }
 
   Widget _selectMediaButton(BuildContext context) {
@@ -79,30 +86,24 @@ class _AddItemHState extends State<AddItemH> {
         ));
   }
 
-  Widget _uploadMediaButton(BuildContext context) {
-    return MaterialButton(
-      onPressed: () async {
-        // File? selectedImage = await getImageFromGallery();
-        if (_uploadedFile != null) {
-          bool success = await uploadFileForUser(_uploadedFile!);
-          if (success) {
-            setState(() {
-              _uploadedFile = null;
-            });
-            print("Success");
-          }
-        }
-      },
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("Upload Image"),
-          Icon(
-            Icons.upload,
-          ),
-        ],
-      ),
-    );
+  void _uploadMedia(LostItem item) async {
+    if (_uploadedFile != null &&
+        item.name.isNotEmpty &&
+        item.description.isNotEmpty) {
+      bool success = await uploadInfo(
+          _uploadedFile!, "${item.name}\n${item.description}", item.path);
+      if (success) {
+        setState(() {
+          _uploadedFile = null;
+          // Dispose text box
+        });
+        print("Success");
+      }
+    } else if (_uploadedFile != null) {
+      //error handle empty text box
+    } else {
+      // Error handle empty image or both empty
+    }
   }
 
   Widget _buildUI() {
@@ -117,57 +118,5 @@ class _AddItemHState extends State<AddItemH> {
         ),
       );
     }
-    // return ListView.builder(
-    //   itemCount: _uploadedFiles.length,
-    //   itemBuilder: (context, index) {
-    //     Reference ref = _uploadedFiles[index];
-    //     return FutureBuilder(
-    //       future: ref.getDownloadURL(),
-    //       builder: (context, snapshot) {
-    //         if (snapshot.hasData) {
-    //           return ListTile(
-    //             leading: Image.network(snapshot.data!),
-    //             title: Text(
-    //               ref.name,
-    //             ),
-    //           );
-    //         }
-    //         return Container();
-    //       },
-    //     );
-    //   },
-    // );
   }
-
-  // void getUploadedFiles() async {
-  //   List<Reference>? result = await getUsersUplodedFiles();
-  //   if (result != null) {
-  //     print(result.toString());
-  //     setState(
-  //       () {
-  //         _uploadedFiles = result;
-  //       },
-  //     );
-  //   }
-  // }
-
-
-    void _uploadTextFile(String text) async {
-    try {
-      // Encode text to bytes using UTF-8 encoding
-      Uint8List textBytes = Uint8List.fromList(utf8.encode(text));
-      
-      final storageRef = FirebaseStorage.instance.ref();
-      final timestamp = DateTime.now().microsecondsSinceEpoch;
-      final uploadRef = storageRef.child("textfiles/$timestamp.txt");
-      
-      // Upload the text bytes to Firebase Storage
-      await uploadRef.putData(textBytes);
-
-      print('Text file uploaded successfully');
-    } catch (e) {
-      print('Error uploading text file: $e');
-    }
-  }
-
 }

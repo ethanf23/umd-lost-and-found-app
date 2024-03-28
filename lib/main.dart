@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:umdlostandfound/add_item_h.dart';
 import 'package:umdlostandfound/location_handling.dart';
+import 'package:umdlostandfound/lost_item.dart';
 import 'package:umdlostandfound/random_markers.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -64,11 +65,12 @@ class _MyHomePageState extends State<MyHomePage> {
       speedAccuracy: 0);
 
   void _add() {
+    final LostItem item = LostItem("", "",
+        'uploads/${position.latitude.toString()}, ${position.longitude.toString()}');
     print("Adding");
     getPosition().then((value) => position = value);
-    print('${position.latitude.toString()}, ${position.longitude.toString()}');
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const AddItemH()));
+        context, MaterialPageRoute(builder: (context) => AddItemH(item: item)));
   }
 
   // Connect storage to FirebaseStorage instance

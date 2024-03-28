@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-
 
 Future<File?> getImageFromGallery() async {
   try {
@@ -19,13 +20,19 @@ Future<File?> getImageFromGallery() async {
   }
 }
 
-Future<bool> uploadFileForUser(File file) async {
+Future<bool> uploadInfo(File file, String text, String path) async {
   try {
+    Uint8List textBytes = Uint8List.fromList(utf8.encode(text));
+
     final storageRef = FirebaseStorage.instance.ref();
     final fileName = file.path.split("/").last;
     final timestamp = DateTime.now().microsecondsSinceEpoch;
-    final uploadRef = storageRef.child("images/uploads/$timestamp-$fileName");
-    await uploadRef.putFile(file);
+    final imageRef = storageRef.child("$path/$timestamp-$fileName");
+    final textRef = storageRef.child("$path/$fileName-info.txt");
+
+    // Upload the text bytes to Firebase Storage
+    await imageRef.putFile(file);
+    await textRef.putData(textBytes);
     return true;
   } catch (e) {
     print(e);
