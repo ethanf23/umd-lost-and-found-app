@@ -64,8 +64,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final lostItems = List.generate(
     20,
-    (i) => LostItem('Item $i',
-        'A description of what needs to be done for Todo $i', 'sample/path'),
+    (i) => LostItem(
+        name: "name",
+        description: "description",
+        path: "path",
+        createdOn: null),
   );
 
   // Connect storage to FirebaseStorage instance
