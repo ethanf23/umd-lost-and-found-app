@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:umdlostandfound/lost_item.dart';
 
 Future<File?> getImageFromGallery() async {
   try {
@@ -20,19 +22,24 @@ Future<File?> getImageFromGallery() async {
   }
 }
 
-Future<bool> uploadInfo(File file, String text, String path) async {
+Future<bool> uploadInfo(File file, LostItem item, String coords) async {
   try {
-    Uint8List textBytes = Uint8List.fromList(utf8.encode(text));
+    FirebaseFirestore db = FirebaseFirestore.instance;
 
-    final storageRef = FirebaseStorage.instance.ref();
     final fileName = file.path.split("/").last;
-    final timestamp = DateTime.now().microsecondsSinceEpoch;
-    final imageRef = storageRef.child("$path/$timestamp-$fileName");
-    final textRef = storageRef.child("$path/$fileName-info.txt");
+    final storageRef = FirebaseStorage.instance.ref();
+    final imageRef = storageRef.child("uploads/$coords/$fileName");
+
+    db
+        .collection("coordinates")
+        .doc(coords)
+        .set(item.toJson(), SetOptions(merge: true))
+        .onError(
+            (error, stackTrace) => print("Error writing document: $error"));
 
     // Upload the text bytes to Firebase Storage
     await imageRef.putFile(file);
-    await textRef.putData(textBytes);
+
     return true;
   } catch (e) {
     print(e);
@@ -40,10 +47,10 @@ Future<bool> uploadInfo(File file, String text, String path) async {
   return false;
 }
 
-Future<List<Reference>?> getUsersUplodedFiles() async {
+Future<List<Reference>?> getUsersUplodedFiles(String location) async {
   try {
     final storageRef = FirebaseStorage.instance.ref();
-    final uploadsRefs = storageRef.child("/images/uploads");
+    final uploadsRefs = storageRef.child("/images/uploads/$location");
     final uploads = await uploadsRefs.listAll();
     print("balls");
     return uploads.items;

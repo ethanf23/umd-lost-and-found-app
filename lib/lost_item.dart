@@ -1,9 +1,25 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class LostItem {
   String name;
   String description;
-  final String path;
+  String path;
+  Timestamp? createdOn;
 
-  LostItem(this.name, this.description, this.path);
+  LostItem(
+      {required this.name,
+      required this.description,
+      required this.path,
+      required this.createdOn});
+
+  Map<String, Object> toJson() {
+    return {
+      'name': name,
+      'description': name,
+      'path': path,
+      'createdOn': Timestamp.now(),
+    };
+  }
 }

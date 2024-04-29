@@ -65,12 +65,15 @@ class _MyHomePageState extends State<MyHomePage> {
       speedAccuracy: 0);
 
   void _add() {
-    final LostItem item = LostItem("", "",
-        'uploads/${position.latitude.toString()}, ${position.longitude.toString()}');
     print("Adding");
     getPosition().then((value) => position = value);
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => AddItemH(item: item)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => AddItemH(
+                  location:
+                      '${position.latitude.toString()}, ${position.longitude.toString()}',
+                )));
   }
 
   // Connect storage to FirebaseStorage instance
