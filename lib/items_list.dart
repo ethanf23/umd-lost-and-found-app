@@ -7,7 +7,7 @@ import 'firebase_options.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class ItemsListScreen extends StatelessWidget {
-  // Requiring the list of todos.
+  // Requiring the list of items.
   const ItemsListScreen({super.key, required this.items});
 
   final List<LostItem> items;
@@ -24,6 +24,7 @@ class ItemsListScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(items[index].name),
+            
           );
         },
       ),
