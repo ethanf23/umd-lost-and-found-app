@@ -1,52 +1,46 @@
-import 'dart:html';
 import 'dart:math';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+Future<List<Marker>> getCoordinatesFromFirestore() async {
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  List<Marker> coordinates = [];
+  int length = await db.collection("coordinates").snapshots().length;
+  print(length);
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+  db.collection("coordinates").get().then(
+    (querySnapshot)  {
+      for(var docSnapShot in querySnapshot.docs){
 
-Future<List<LatLng>> getCoordinatesFromFirestore() async {
-  List<LatLng> coordinates = [];
+         print(docSnapShot.id);
 
+         List<String> nameParts = docSnapShot.id.split(',');
+         double latitude = double.parse(nameParts[0]);
+
+         print(latitude);
+         
+         double longitude = double.parse(nameParts[1]);
+
+         print(longitude);
+
+        coordinates.add(accurateMarker(LatLng(latitude, longitude),));
+
+      }
+    },
+    onError: (e) => print("$e")
+  );
   // Assuming 'coordinates' is the name of your collection
-  QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('coordinates').get();
-
-  querySnapshot.docs.forEach((doc) {
-    // Get the latitude and longitude from the document name
-    List<String> nameParts = doc.id.split('.');
-    double latitude = double.parse(nameParts[0]);
-    double longitude = double.parse(nameParts[1]);
-    coordinates.add(LatLng(latitude, longitude));
-  });
+  //QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('coordinates').get();
+  print(coordinates);
 
   return coordinates;
+
 }
 
-List<Marker> generateMarkersFromFirestore({
-  required int length,
-  required LatLng center,
-}) {
-  final random = Random(42);
-  List<Marker> markers = [];
-
-  getCoordinatesFromFirestore().then((coordinates) {
-    for (int i = 0; i < length; i++) {
-      LatLng randomCoordinate = coordinates[random.nextInt(coordinates.length)];
-      markers.add(accurateMarker(
-        LatLng(
-          randomCoordinate.latitude + center.latitude,
-          randomCoordinate.longitude + center.longitude,
-        ),
-      ));
-    }
-  });
-
-  return markers;
-}
 
 List<Marker> generateMarkers({
   required int length,

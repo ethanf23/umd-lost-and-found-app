@@ -11,11 +11,11 @@ import 'package:geolocator/geolocator.dart';
 
 void main() async {
   runApp(const MyApp());
-
   // Required to connect to Firebase Cloud Storage
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
 }
 
 class MyApp extends StatelessWidget {
@@ -75,52 +75,60 @@ class _MyHomePageState extends State<MyHomePage> {
   // final storage = FirebaseStorage.instance;
 
   // Generate random markers for testing
-  List<Marker> randomMarkers =
-      generateMarkers(length: 7, center: _initialCenter);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Map recommended to be stored in stack
-        child: Stack(
-          children: <Widget>[
-            // FLutterMap Widget with TileLayer, GestureDetector children
-            FlutterMap(
-                mapController: MapController(),
-                options: options,
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-                  ),
-                  // GestureDetector wraps markers so they are clickable
-                  GestureDetector(
-                      //onTap send to page containing all lost items at LatLng point
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ItemsListScreen(items: lostItems)));
-                      },
-                      child: MarkerLayer(markers: randomMarkers))
-                ])
-          ],
+    return FutureBuilder<List<Marker>>(
+      future: getCoordinatesFromFirestore(),
+      builder: (context, AsyncSnapshot<List<Marker>> snapshot) {  
+        if(snapshot.hasData) {
+          print(snapshot.data);
+          return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _add,
-        tooltip: 'Add New Item',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        body: Center(
+          // Map recommended to be stored in stack
+          child: Stack(
+            children: <Widget>[
+              // FLutterMap Widget with TileLayer, GestureDetector children
+              FlutterMap(
+                  mapController: MapController(),
+                  options: options,
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+                    ),
+                    // GestureDetector wraps markers so they are clickable
+                    GestureDetector(
+                        //onTap send to page containing all lost items at LatLng point
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ItemsListScreen(items: lostItems)));
+                        },
+                        child: MarkerLayer(markers: snapshot.data!))
+                  ])
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _add,
+          tooltip: 'Add New Item',
+          child: const Icon(Icons.add),
+        ), // This trailing comma makes auto-formatting nicer for build methods.
+      );
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
     );
   }
 }
