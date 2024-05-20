@@ -2,20 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:umdlostandfound/items_list.dart';
+import 'package:umdlostandfound/loading_screen.dart';
 import 'package:umdlostandfound/random_markers.dart';
 import 'package:umdlostandfound/lost_item.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:geolocator/geolocator.dart';
 
 void main() async {
-  runApp(const MyApp());
   // Required to connect to Firebase Cloud Storage
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -56,8 +52,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _add() {
-    getPosition();
-    print('${position.latitude.toString()}, ${position.longitude.toString()}');
+    // getPosition();
+    // print('${position.latitude.toString()}, ${position.longitude.toString()}');
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => const Placeholder()));
   }
@@ -78,12 +74,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Marker>>(
-      future: getCoordinatesFromFirestore(),
-      builder: (context, AsyncSnapshot<List<Marker>> snapshot) {  
-        if(snapshot.hasData) {
-          print(snapshot.data);
-          return Scaffold(
+    return FutureBuilder(
+        // Initialize FlutterFire
+        future: Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform),
+        builder: (context, snapshot) {
+          // Check for errors
+          if (snapshot.hasError) {
+            return ErrorWidget(snapshot.connectionState);
+          }
+
+          // Once complete, show your application
+          if (snapshot.connectionState == ConnectionState.done) {
+            return _buildMapScreen(context);
+          }
+
+          // Otherwise, show something whilst waiting for initialization to complete
+          return const LoadingScreen();
+        });
+  }
+
+  Widget _buildMapScreen(BuildContext context) {
+    return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           // Here we take the value from the MyHomePage object that was created by
@@ -91,31 +103,39 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text(widget.title),
         ),
         body: Center(
-          // Map recommended to be stored in stack
           child: Stack(
-            children: <Widget>[
-              // FLutterMap Widget with TileLayer, GestureDetector children
-              FlutterMap(
-                  mapController: MapController(),
-                  options: options,
-                  children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-                    ),
-                    // GestureDetector wraps markers so they are clickable
-                    GestureDetector(
-                        //onTap send to page containing all lost items at LatLng point
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ItemsListScreen(items: lostItems)));
-                        },
-                        child: MarkerLayer(markers: snapshot.data!))
-                  ])
+            children: [
+              FutureBuilder<List<Marker>>(
+                  future: getCoordinatesFromFirestore(),
+                  builder: (context, AsyncSnapshot<List<Marker>> snapshot) {
+                    if (snapshot.hasData) {
+                      print(snapshot.data);
+                      return FlutterMap(
+                          mapController: MapController(),
+                          options: options,
+                          children: [
+                            TileLayer(
+                              urlTemplate:
+                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              userAgentPackageName:
+                                  'dev.fleaflet.flutter_map.example',
+                            ),
+                            // GestureDetector wraps markers so they are clickable
+                            GestureDetector(
+                                //onTap send to page containing all lost items at LatLng point
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ItemsListScreen(
+                                              items: lostItems)));
+                                },
+                                child: MarkerLayer(markers: snapshot.data!))
+                          ]);
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  })
             ],
           ),
         ),
@@ -123,12 +143,6 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: _add,
           tooltip: 'Add New Item',
           child: const Icon(Icons.add),
-        ), // This trailing comma makes auto-formatting nicer for build methods.
-      );
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
-    );
+        ));
   }
 }

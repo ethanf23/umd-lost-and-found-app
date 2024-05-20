@@ -44,38 +44,38 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCEWfCayH9fIKIxVffTQKqz9poCmgIs4Dc',
-    appId: '1:182192356671:web:273b182ff65491e305678a',
-    messagingSenderId: '182192356671',
-    projectId: 'umdlostandfound',
-    authDomain: 'umdlostandfound.firebaseapp.com',
-    storageBucket: 'umdlostandfound.appspot.com',
-    measurementId: 'G-M1WRWXW1R5',
+    apiKey: 'AIzaSyArqkKKyMTuMd0j-lUjR3D6sNIh786WG9I',
+    appId: '1:602266855191:web:f9d95fb7876582ff81b952',
+    messagingSenderId: '602266855191',
+    projectId: 'umdlostandfoundbeta',
+    authDomain: 'umdlostandfoundbeta.firebaseapp.com',
+    storageBucket: 'umdlostandfoundbeta.appspot.com',
+    measurementId: 'G-JEV3EJNRT4',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBs6YSPoVRQk8hsPddjWUnpTBmuGJJI3iQ',
-    appId: '1:182192356671:android:88de2f4de4ac219305678a',
-    messagingSenderId: '182192356671',
-    projectId: 'umdlostandfound',
-    storageBucket: 'umdlostandfound.appspot.com',
+    apiKey: 'AIzaSyDQdQWQVI8H9xF-kuNmmsn0WItVLYiEtKQ',
+    appId: '1:602266855191:android:e8616029cc01e09681b952',
+    messagingSenderId: '602266855191',
+    projectId: 'umdlostandfoundbeta',
+    storageBucket: 'umdlostandfoundbeta.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAdclxISS6_tEQVh6JTmd8wAzINMAVj8LQ',
-    appId: '1:182192356671:ios:9ae00184bb1feac105678a',
-    messagingSenderId: '182192356671',
-    projectId: 'umdlostandfound',
-    storageBucket: 'umdlostandfound.appspot.com',
+    apiKey: 'AIzaSyCprkUNOYOpRz8Lyjz65jOrZ9pq7hMjaFk',
+    appId: '1:602266855191:ios:194482cd12ee8ca181b952',
+    messagingSenderId: '602266855191',
+    projectId: 'umdlostandfoundbeta',
+    storageBucket: 'umdlostandfoundbeta.appspot.com',
     iosBundleId: 'com.example.mapTest',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyAdclxISS6_tEQVh6JTmd8wAzINMAVj8LQ',
-    appId: '1:182192356671:ios:cbe05c45469a996205678a',
-    messagingSenderId: '182192356671',
-    projectId: 'umdlostandfound',
-    storageBucket: 'umdlostandfound.appspot.com',
+    apiKey: 'AIzaSyCprkUNOYOpRz8Lyjz65jOrZ9pq7hMjaFk',
+    appId: '1:602266855191:ios:d52a618b34c69dec81b952',
+    messagingSenderId: '602266855191',
+    projectId: 'umdlostandfoundbeta',
+    storageBucket: 'umdlostandfoundbeta.appspot.com',
     iosBundleId: 'com.example.mapTest.RunnerTests',
   );
 }
