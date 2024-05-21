@@ -33,9 +33,11 @@ Future<bool> uploadInfo(File file, LostItem item, String coords) async {
     db
         .collection("coordinates")
         .doc(coords)
-        .set(item.toJson(), SetOptions(merge: true))
-        .onError(
-            (error, stackTrace) => print("Error writing document: $error"));
+        .set({
+          'items': FieldValue.arrayUnion([item.toJson()])
+        }, SetOptions(merge: true))
+        .then((value) => print("Document successfully written!"))
+        .catchError((error) => print("Error writing document: $error"));
 
     // Upload the text bytes to Firebase Storage
     await imageRef.putFile(file);

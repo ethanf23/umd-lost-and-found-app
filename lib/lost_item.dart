@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class LostItem {
   String name;
@@ -15,7 +18,7 @@ class LostItem {
   Map<String, Object> toJson() {
     return {
       'name': name,
-      'description': name,
+      'description': description,
       'path': path,
       'createdOn': Timestamp.now(),
     };
