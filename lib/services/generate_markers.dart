@@ -3,7 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-Future<List<Marker>> getCoordinatesFromFirestore() async {
+List<Marker> getCoordinatesFromFirestore() {
   FirebaseFirestore db = FirebaseFirestore.instance;
   List<Marker> coordinates = [];
 
@@ -20,6 +20,7 @@ Future<List<Marker>> getCoordinatesFromFirestore() async {
     }
   }, onError: (e) => print("$e"));
 
+  print(coordinates);
   return coordinates;
 }
 

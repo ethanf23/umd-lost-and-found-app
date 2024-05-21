@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:umdlostandfound/lost_item.dart';
+import 'package:umdlostandfound/models/lost_item.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import '../firebase_options.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class ItemsListScreen extends StatelessWidget {
@@ -24,7 +24,6 @@ class ItemsListScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           return ListTile(
             title: Text(items[index].name),
-            
           );
         },
       ),

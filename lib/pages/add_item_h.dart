@@ -5,8 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:umdlostandfound/lost_item.dart';
-import 'utils.dart';
+import 'package:umdlostandfound/models/lost_item.dart';
+import '../services/utils.dart';
 
 class AddItemH extends StatefulWidget {
   const AddItemH({super.key, required this.location});
