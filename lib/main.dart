@@ -21,6 +21,7 @@ void main() async {
   // );
 
   runApp(const MyApp());
+  print("Run!");
 }
 
 class MyApp extends StatelessWidget {
