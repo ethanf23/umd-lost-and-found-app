@@ -28,7 +28,7 @@ class _AddItemHState extends State<AddItemH> {
   void initState() {
     super.initState();
     location = widget.location;
-    item.path = "uploads/$location";
+    item.path = "/uploads/$location";
   }
 
   @override

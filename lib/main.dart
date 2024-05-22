@@ -65,10 +65,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Default map to center at the University of Maryland
   static const _initialCenter = LatLng(38.9869, -76.9426);
-  MapOptions options =
-      const MapOptions(initialCenter: _initialCenter, initialZoom: 14.75);
+  MapOptions options = const MapOptions(initialCenter: _initialCenter, initialZoom: 14.75);
   late Position position = Position(
       longitude: 0,
       latitude: 0,
@@ -85,42 +83,35 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    markers = getCoordinatesFromFirestore();
+    loadMarkers();
+  }
+
+  Future<void> loadMarkers() async {
+    markers = await getCoordinatesFromFirestore(context);
+    setState(() {
+      // This will trigger a rebuild of your widget with the loaded markers
+    });
   }
 
   void _add() {
-    // getPosition();
-    // print('${position.latitude.toString()}, ${position.longitude.toString()}');
     print("Adding");
-    getPosition().then((value) => position = value);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AddItemH(
-                  location:
-                      '${position.latitude.toString()}, ${position.longitude.toString()}',
-                )));
+    getPosition().then((value) {
+      position = value;
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AddItemH(
+                    location: '${position.latitude.toString()}, ${position.longitude.toString()}',
+                  )));
+    });
   }
-
-  final lostItems = List.generate(
-    20,
-    (i) => LostItem(
-        name: "name",
-        description: "description",
-        path: "path",
-        createdOn: null),
-  );
 
   @override
   Widget build(BuildContext context) {
-    print(markers);
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
         ),
         body: Center(
@@ -131,22 +122,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   options: options,
                   children: [
                     TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                       userAgentPackageName: 'dev.fleaflet.flutter_map.example',
                     ),
-                    // GestureDetector wraps markers so they are clickable
-                    GestureDetector(
-                        //onTap send to page containing all lost items at LatLng point
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ItemsListScreen(items: lostItems)));
-                        },
-                        child:
-                            MarkerLayer(markers: getCoordinatesFromFirestore()))
+                    MarkerLayer(markers: markers),
                   ])
             ],
           ),

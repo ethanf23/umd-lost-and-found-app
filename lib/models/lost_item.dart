@@ -23,4 +23,14 @@ class LostItem {
       'createdOn': Timestamp.now(),
     };
   }
+
+ factory LostItem.fromJson(Map<String, Object?> json) {
+    return LostItem(
+      name: json['name'] as String? ?? 'Default Name',
+      description: json['description'] as String? ?? 'No description provided',
+      path: json['path'] as String? ?? 'No path provided',
+      createdOn: json['createdOn'] as Timestamp? ?? Timestamp.now(),
+    );
+  }
+
 }
