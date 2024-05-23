@@ -66,7 +66,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   static const _initialCenter = LatLng(38.9869, -76.9426);
-  MapOptions options = const MapOptions(initialCenter: _initialCenter, initialZoom: 14.75);
+  MapOptions options =
+      const MapOptions(initialCenter: _initialCenter, initialZoom: 14.75);
   late Position position = Position(
       longitude: 0,
       latitude: 0,
@@ -84,25 +85,26 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    loadMarkers();
+    // loadMarkers();
   }
 
-  Future<void> loadMarkers() async {
-    markers = await getCoordinatesFromFirestore(context);
-    setState(() {
-      // This will trigger a rebuild of your widget with the loaded markers
-    });
-  }
+  // Future<void> loadMarkers() async {
+  //   markers = await getCoordinatesFromFirestore(context);
+  //   setState(() {
+  //     // This will trigger a rebuild of your widget with the loaded markers
+  //   });
+  // }
 
   void _add() {
     print("Adding");
-    getPosition().then((value) {
+    getPosition(context).then((value) {
       position = value;
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => AddItemH(
-                    location: '${position.latitude.toString()}, ${position.longitude.toString()}',
+                    location:
+                        '${position.latitude.toString()}, ${position.longitude.toString()}',
                   )));
     });
   }
@@ -114,22 +116,35 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(widget.title),
         ),
-        body: Center(
-          child: Stack(
-            children: [
-              FlutterMap(
-                  mapController: MapController(),
-                  options: options,
+        body: StreamBuilder<List<Marker>>(
+            stream: getCoordinatesFromFirestore(context),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              }
+
+              return Center(
+                child: Stack(
                   children: [
-                    TileLayer(
-                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-                    ),
-                    MarkerLayer(markers: markers),
-                  ])
-            ],
-          ),
-        ),
+                    FlutterMap(
+                        mapController: MapController(),
+                        options: options,
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            userAgentPackageName:
+                                'dev.fleaflet.flutter_map.example',
+                          ),
+                          MarkerLayer(markers: snapshot.data!),
+                        ])
+                  ],
+                ),
+              );
+            }),
         floatingActionButton: FloatingActionButton(
           onPressed: _add,
           tooltip: 'Add New Item',
