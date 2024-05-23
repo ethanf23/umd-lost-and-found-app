@@ -29,7 +29,7 @@ Future<bool> uploadInfo(File file, LostItem item, String coords) async {
     final fileName = file.path.split("/").last;
     final storageRef = FirebaseStorage.instance.ref();
     final imageRef = storageRef.child("uploads/$coords/$fileName");
-
+    item.path = "uploads/$coords/$fileName";
     db
         .collection("coordinates")
         .doc(coords)

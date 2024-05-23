@@ -17,6 +17,7 @@ class AddItemH extends StatefulWidget {
 }
 
 class _AddItemHState extends State<AddItemH> {
+
   File? _uploadedFile;
   late final String location;
   final TextEditingController _nameController = TextEditingController();
@@ -28,7 +29,7 @@ class _AddItemHState extends State<AddItemH> {
   void initState() {
     super.initState();
     location = widget.location;
-    item.path = "/uploads/$location";
+    item.path = "";
   }
 
   @override

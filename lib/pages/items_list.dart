@@ -95,7 +95,7 @@ Widget buildItemsList() {
       final docSnapshot = await docRef.get();
       if (docSnapshot.exists) {
         List<LostItem> fetchedItems = [];
-        var itemsArray = docSnapshot.data()?['array'] as List<dynamic>; // Assuming 'items' is the key for the array of maps
+        var itemsArray = docSnapshot.data()?['items'] as List<dynamic>; // Assuming 'items' is the key for the array of maps
         for (var itemMap in itemsArray) {
           fetchedItems.add(LostItem.fromJson(itemMap as Map<String, dynamic>));
         }
