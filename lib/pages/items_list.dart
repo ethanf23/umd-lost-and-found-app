@@ -1,10 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:umdlostandfound/models/lost_item.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:firebase_core/firebase_core.dart';
-import '../firebase_options.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class ItemsListScreen extends StatefulWidget {
@@ -31,6 +27,13 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
   Widget build(BuildContext context) {
     setState(() {});
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Viewing Lost Items',
+            style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.black, // Keeping the dark theme
+        iconTheme: const IconThemeData(
+            color: Colors.white), // Makes the back button white
+      ),
       resizeToAvoidBottomInset: false,
       body: Column(
         children: <Widget>[
@@ -56,32 +59,51 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
               Widget imageWidget;
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
-                print(item.path);
                 imageWidget = Image.network(
                   snapshot.data!,
-                  width: 50,
-                  height: 50,
                   fit: BoxFit.cover,
+                  height: 300, // Fixed height for each image
                 );
               } else if (snapshot.connectionState == ConnectionState.waiting) {
-                imageWidget = CircularProgressIndicator();
+                imageWidget = const CircularProgressIndicator();
               } else {
-                print(snapshot.error);
-                print(item.path);
-
-                imageWidget = Icon(Icons.error);
+                imageWidget = const Icon(Icons.error);
               }
 
-              return ListTile(
-                title: Text(item.name),
-                subtitle: Text(item.description),
-                leading: imageWidget,
-                trailing: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 9, 10, 10),
-                  ),
-                  onPressed: () => claimItem(item, index),
-                  child: const Text('Claim'),
+              return Container(
+                color: Colors.black,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    imageWidget,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(item.name,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 18)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(item.description,
+                          style: const TextStyle(color: Colors.white)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color(0xFFFFD700), // Gold color
+                          textStyle: const TextStyle(
+                              color: Colors.black, fontSize: 16),
+                        ),
+                        onPressed: () => claimItem(item, index),
+                        child: const Text('Claim',
+                            style: TextStyle(color: Colors.black)),
+                      ),
+                    ),
+                  ],
                 ),
               );
             },

@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:umdlostandfound/pages/add_item_h.dart';
 import 'package:umdlostandfound/services/location_handling.dart';
-import 'package:umdlostandfound/models/lost_item.dart';
-import 'package:umdlostandfound/pages/items_list.dart';
-import 'package:umdlostandfound/pages/loading_screen.dart';
 import 'package:umdlostandfound/services/generate_markers.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -36,15 +32,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: const ColorScheme(
           brightness: Brightness.light,
-          primary: Color(0x00e21833), // Deep Purple
-          primaryContainer: Color(0xffd200), // Deep Purple Dark
-          secondary: Color(0xFF03DAC6), // Teal
-          secondaryContainer: Color(0xFF018786), // Teal Dark
+          primary: Color(0xFFFFD700), // UMD Gold
+          primaryContainer: Color(0xFFC5A600), // UMD Gold Dark
+          secondary: Color(0xFFCE1126), // UMD Red
+          secondaryContainer: Color(0xFF8C0D1B), // UMD Red Dark
           surface: Color(0xFFFFFFFF), // White
           background: Color(0xFFFFFFFF), // White
           error: Color(0xFFB00020), // Red
-          onPrimary: Color(0xFFFFFFFF), // White
-          onSecondary: Color(0xFF000000), // Black
+          onPrimary: Color(0xFF000000), // Black
+          onSecondary: Color(0xFFFFFFFF), // White
           onSurface: Color(0xFF000000), // Black
           onBackground: Color(0xFF000000), // Black
           onError: Color(0xFFFFFFFF), // White
@@ -114,7 +110,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
+          title: Text(
+            widget.title,
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
         body: StreamBuilder<List<Marker>>(
             stream: getCoordinatesFromFirestore(context),
