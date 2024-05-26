@@ -147,14 +147,25 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
           .collection("coordinates")
           .doc(widget.location);
 
-      if (items.length == 1) {
-        // If it's the last item, delete the whole document
-        await docRef.delete();
+      // Fetch the current array from Firestore
+      DocumentSnapshot docSnapshot = await docRef.get();
+      if (docSnapshot.exists) {
+        Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+        List<dynamic> itemsArray = List.from(data['items'] ?? []);
+
+        itemsArray.removeAt(index);  // Remove the item by index
+
+        if (itemsArray.isEmpty) {
+          // If it's the last item, delete the whole document
+          await docRef.delete();
+        } else {
+          // Otherwise, update the document with the new array
+          await docRef.update({
+            'items': itemsArray
+          });
+        }
       } else {
-        // Otherwise, just remove the item from the array
-        await docRef.update({
-          'items': FieldValue.arrayRemove([item.toJson()])
-        });
+        print("Document does not exist.");  // Debugging line
       }
 
       // Update local list and UI
@@ -167,6 +178,7 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
         duration: Duration(seconds: 2),
       ));
     } catch (e) {
+      print("Error during claiming item: $e");  // Debugging line
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Failed to claim item: $e"),
         duration: const Duration(seconds: 2),
