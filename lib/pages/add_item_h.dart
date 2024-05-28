@@ -31,9 +31,10 @@ class _AddItemHState extends State<AddItemH> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Item"),
+        title: const Text("Add Item", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -143,12 +144,15 @@ class _AddItemHState extends State<AddItemH> {
         item.description.isNotEmpty) {
       bool success = await uploadInfo(_uploadedFile!, item, location);
       if (success) {
-        _showSnackBar(context, "Item uploaded successfully!");
+        _showSnackBar(
+            context, "Item uploaded successfully, returning to home!");
         setState(() {
           _uploadedFile = null;
           _nameController.clear();
           _descController.clear();
         });
+        await Future.delayed(const Duration(seconds: 4));
+        Navigator.popUntil(context, ModalRoute.withName('/'));
       } else {
         _showSnackBar(context, "Failed to upload item.");
       }

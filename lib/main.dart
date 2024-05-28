@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:umdlostandfound/pages/add_item_h.dart';
+import 'package:umdlostandfound/pages/select_from_map.dart';
+import 'package:umdlostandfound/services/expandable_fab.dart';
 import 'package:umdlostandfound/services/location_handling.dart';
 import 'package:umdlostandfound/services/generate_markers.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -48,6 +50,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Home'),
+      routes: {
+        '/add_item_h': (context) => AddItemH(
+            location: ModalRoute.of(context)!.settings.arguments as String),
+      },
     );
   }
 }
@@ -84,13 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // loadMarkers();
   }
 
-  // Future<void> loadMarkers() async {
-  //   markers = await getCoordinatesFromFirestore(context);
-  //   setState(() {
-  //     // This will trigger a rebuild of your widget with the loaded markers
-  //   });
-  // }
-
   void _add() {
     print("Adding");
     getPosition(context).then((value) {
@@ -105,49 +104,72 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _addFromSelect() {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const SelectFromMap()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(
-            widget.title,
-            style: const TextStyle(color: Colors.white),
-          ),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(
+          widget.title,
+          style: const TextStyle(color: Colors.white),
         ),
-        body: StreamBuilder<List<Marker>>(
-            stream: getCoordinatesFromFirestore(context),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              }
+      ),
+      body: StreamBuilder<List<Marker>>(
+          stream: getCoordinatesFromFirestore(context),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
 
-              return Center(
-                child: Stack(
-                  children: [
-                    FlutterMap(
-                        mapController: MapController(),
-                        options: options,
-                        children: [
-                          TileLayer(
-                            urlTemplate:
-                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            userAgentPackageName:
-                                'dev.fleaflet.flutter_map.example',
-                          ),
-                          MarkerLayer(markers: snapshot.data!),
-                        ])
-                  ],
-                ),
-              );
-            }),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _add,
-          tooltip: 'Add New Item',
-          child: const Icon(Icons.add),
-        ));
+            return Center(
+              child: Stack(
+                children: [
+                  FlutterMap(
+                      mapController: MapController(),
+                      options: options,
+                      children: [
+                        TileLayer(
+                          urlTemplate:
+                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          userAgentPackageName:
+                              'dev.fleaflet.flutter_map.example',
+                        ),
+                        MarkerLayer(markers: snapshot.data!),
+                      ])
+                ],
+              ),
+            );
+          }),
+      floatingActionButton: ExpandableFab(distance: 75, children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              ActionButton(
+                onPressed: _add,
+                icon: const Icon(Icons.add_location_alt_sharp),
+                label: 'Add Item from my location',
+              ),
+              const SizedBox(
+                  height:
+                      16), // Increased space between buttons for better alignment
+              ActionButton(
+                onPressed: _addFromSelect,
+                icon: const Icon(Icons.map),
+                label: 'Add Item from select on map',
+              ),
+            ],
+          ),
+        )
+      ]),
+    );
   }
 }

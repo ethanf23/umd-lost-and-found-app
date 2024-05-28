@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:umdlostandfound/models/lost_item.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:umdlostandfound/pages/loading_screen.dart';
 
 class ItemsListScreen extends StatefulWidget {
   const ItemsListScreen({super.key, required this.location});
@@ -47,7 +48,7 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
 
   Widget buildItemsList() {
     if (items.isEmpty) {
-      return const CircularProgressIndicator();
+      return const LoadingScreen();
     } else {
       return ListView.builder(
         itemCount: items.length,
@@ -65,7 +66,7 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
                   height: 300, // Fixed height for each image
                 );
               } else if (snapshot.connectionState == ConnectionState.waiting) {
-                imageWidget = const CircularProgressIndicator();
+                imageWidget = const CircularProgressIndicator.adaptive();
               } else {
                 imageWidget = const Icon(Icons.error);
               }
@@ -142,6 +143,30 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
   }
 
   Future<void> claimItem(LostItem item, int index) async {
+    // Show confirmation dialog before claiming the item
+    bool confirm = await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Confirm'),
+              content: const Text('Do you want to claim this item?'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('No'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Yes'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false; // Default to false if dialog is dismissed
+
+    if (!confirm) return; // Exit if not confirmed
+
     try {
       DocumentReference docRef = FirebaseFirestore.instance
           .collection("coordinates")
@@ -153,19 +178,17 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
         Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
         List<dynamic> itemsArray = List.from(data['items'] ?? []);
 
-        itemsArray.removeAt(index);  // Remove the item by index
+        itemsArray.removeAt(index); // Remove the item by index
 
         if (itemsArray.isEmpty) {
           // If it's the last item, delete the whole document
           await docRef.delete();
         } else {
           // Otherwise, update the document with the new array
-          await docRef.update({
-            'items': itemsArray
-          });
+          await docRef.update({'items': itemsArray});
         }
       } else {
-        print("Document does not exist.");  // Debugging line
+        print("Document does not exist."); // Debugging line
       }
 
       // Update local list and UI
@@ -178,7 +201,7 @@ class _ItemsListScreenState extends State<ItemsListScreen> {
         duration: Duration(seconds: 2),
       ));
     } catch (e) {
-      print("Error during claiming item: $e");  // Debugging line
+      print("Error during claiming item: $e"); // Debugging line
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Failed to claim item: $e"),
         duration: const Duration(seconds: 2),
