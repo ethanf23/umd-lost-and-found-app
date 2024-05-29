@@ -40,14 +40,8 @@ class SelectFromMapState extends State<SelectFromMap> {
                   initialZoom: 14.75,
                   onTap: (_, p) {
                     if (customMarkers.isNotEmpty) {
-                      // Show an error message if there is already one marker
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content:
-                              Text('Only one marker can be placed on the map.'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
+                      showTopSnackBar(
+                          context, 'Only one marker can be placed on the map.');
                     } else {
                       setState(() {
                         customMarkers.add(
@@ -56,12 +50,8 @@ class SelectFromMapState extends State<SelectFromMap> {
                             width: 80,
                             height: 80,
                             child: GestureDetector(
-                              onTap: () => ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text('Tapped existing marker'),
-                                duration: Duration(seconds: 1),
-                                showCloseIcon: true,
-                              )),
+                              onTap: () => showTopSnackBar(
+                                  context, 'Tapped existing marker'),
                               child: const Icon(Icons.location_pin,
                                   size: 40, color: Colors.black),
                             ),
@@ -83,35 +73,53 @@ class SelectFromMapState extends State<SelectFromMap> {
               ],
             ),
           ),
-          if (customMarkers.length == 1) _buildConfirmationButtons(context),
+          SafeArea(
+            child: _buildConfirmationButtons(context),
+          ),
         ],
       ),
     );
   }
 
+  void showTopSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.only(top: 50.0, left: 15.0, right: 15.0),
+        duration: const Duration(seconds: 2),
+        showCloseIcon: true,
+      ),
+    );
+  }
+
   Widget _buildConfirmationButtons(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () => setState(() => customMarkers.clear()),
-              child: const Text('Cancel Selection'),
-            ),
+          ElevatedButton(
+            onPressed: () {
+              if (customMarkers.isEmpty) {
+                showTopSnackBar(context, 'No location selected.');
+              } else {
+                setState(() => customMarkers.clear());
+              }
+            },
+            child: const Text('Cancel'),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
+          ElevatedButton(
+            onPressed: () {
+              if (customMarkers.isEmpty) {
+                showTopSnackBar(context, 'No location selected.');
+              } else {
                 Navigator.pushNamed(context, '/add_item_h',
                     arguments:
                         '${customMarkers.first.point.latitude.toString()}, ${customMarkers.first.point.longitude.toString()}');
-              },
-              child: const Text('Confirm Selection'),
-            ),
+              }
+            },
+            child: const Text('Confirm'),
           ),
         ],
       ),

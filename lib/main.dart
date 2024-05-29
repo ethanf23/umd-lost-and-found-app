@@ -148,28 +148,20 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             );
           }),
-      floatingActionButton: ExpandableFab(distance: 75, children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              ActionButton(
-                onPressed: _add,
-                icon: const Icon(Icons.add_location_alt_sharp),
-                label: 'Add Item from my location',
-              ),
-              const SizedBox(
-                  height:
-                      16), // Increased space between buttons for better alignment
-              ActionButton(
-                onPressed: _addFromSelect,
-                icon: const Icon(Icons.map),
-                label: 'Add Item from select on map',
-              ),
-            ],
+      floatingActionButton: SafeArea(
+        child: ExpandableFab(initialOpen: false, distance: 75, children: [
+          ActionButton(
+            onPressed: _add,
+            icon: const Icon(Icons.add_location_alt_sharp),
+            label: 'Use My Location',
           ),
-        )
-      ]),
+          ActionButton(
+            onPressed: _addFromSelect,
+            icon: const Icon(Icons.map),
+            label: 'Select on Map',
+          )
+        ]),
+      ),
     );
   }
 }
