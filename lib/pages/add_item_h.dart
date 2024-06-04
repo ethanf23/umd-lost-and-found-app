@@ -151,7 +151,7 @@ class _AddItemHState extends State<AddItemH> {
           _nameController.clear();
           _descController.clear();
         });
-        await Future.delayed(const Duration(seconds: 4));
+        await Future.delayed(const Duration(seconds: 1));
         Navigator.popUntil(context, ModalRoute.withName('/'));
       } else {
         _showSnackBar(context, "Failed to upload item.");

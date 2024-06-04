@@ -47,14 +47,3 @@ Future<bool> uploadInfo(File file, LostItem item, String coords) async {
   return false;
 }
 
-Future<List<Reference>?> getUsersUplodedFiles(String location) async {
-  try {
-    final storageRef = FirebaseStorage.instance.ref();
-    final uploadsRefs = storageRef.child("/images/uploads/$location");
-    final uploads = await uploadsRefs.listAll();
-    print("balls");
-    return uploads.items;
-  } catch (e) {
-    print(e);
-  }
-}

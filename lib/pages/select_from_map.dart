@@ -107,7 +107,7 @@ class SelectFromMapState extends State<SelectFromMap> {
                 setState(() => customMarkers.clear());
               }
             },
-            child: const Text('Cancel'),
+            child: const Text(style: TextStyle(color: Colors.black),'Cancel'), 
           ),
           ElevatedButton(
             onPressed: () {
@@ -119,7 +119,7 @@ class SelectFromMapState extends State<SelectFromMap> {
                         '${customMarkers.first.point.latitude.toString()}, ${customMarkers.first.point.longitude.toString()}');
               }
             },
-            child: const Text('Confirm'),
+            child: const Text(style: TextStyle(color: Colors.black),'Confirm'), 
           ),
         ],
       ),
